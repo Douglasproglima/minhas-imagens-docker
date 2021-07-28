@@ -165,4 +165,41 @@ Executando o procedimento acima, é gerado a imagem:
 #### Site no Ar
 ![NewWebite](./assets/images/2.png)
 
+### Criando o Container Python
+---
+```sh
+# Acessando o workspace-python, tenho o dockerfile:
+# Versão 3 da imagem Python oficial
+FROM python:3
+
+# Cria a pasta app dentro do dir /usr/src/
+WORKDIR /usr/src/app
+
+# o app.py será copiado para esse diretório
+COPY fibonacci.py /usr/src/app
+
+# Executa o app.py e força a estar no diretório onde esta o arquivo
+# Porém como no WORKDIR setei o dir, então no CMD eu já estou no dir onde esta
+# o arquivo a ser executado, então bastaria passar no segundo parametro
+# fibonacci.pyCMD [ "python", "./fibonacci.py" ]
+CMD [ "python", "/usr/src/app/fibonacci.py" ]
+
+# Criando a imagem
+  $ docker image build -t img-fibonacci-python:1.0
+
+```
+![Image-Python](./assets/images/3.png)
+
+```sh
+# Gerando o container:
+  $ docker run -ti --name container-fibonacci-python img-fibonacci-python:1.0
+```
+![Container-Python](./assets/images/4.png)
+
+```sh
+# Executando a aplicação:
+  $ docker exec -it run-fibonacci-python python3 ./fibonacci.py
+```
+![App-Fibonacci](./assets/images/5.png)
+
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
