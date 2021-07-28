@@ -91,7 +91,7 @@ $ docker run -it --name meu-app-py minha-img-ubuntu-py
 ```
 #### EXEMPLO 2 - APACHE PERSONALIZADO
 ---
-```bash
+```sh
 # 1 - Criar a pasta site:
  $ mkdir minhas-imagens-docker/debian-apache/site
  $ cd debian-apache/site
@@ -131,7 +131,7 @@ $ wget http://site1368633667.hospedagemdesites.ws/site1.zip
   VOLUME /var/www/html
 
   # Porta que será exposta o container
-  EXPOSE 8082
+  EXPOSE 80
 
   # Informa qual aplicação irá rodar
   # Como será uma aplicação executada em primero plano, uso o entrypoint para informar o arquivo
@@ -143,11 +143,26 @@ $ wget http://site1368633667.hospedagemdesites.ws/site1.zip
 
 # 6 - Gerar a imagem
 # Estrutura: docker image build -t nome-image:versao ./diretorio-do-dockerfile
-$ docker image build -t debian-apache:1.0 .
+  $ docker image build -t debian-apache:1.0 .
 ```
-#### imagem Debian-Apache
+#### Imagem Debian-Apache Gerada:
 ____
 Executando o procedimento acima, é gerado a imagem:
 ![Debian-Apache](./assets/images/1.png)
+
+#### Criando o container debian-apache-container
+```sh
+# Subindo o container a partir da imagem criada
+  $ docker run -dti -p 80:80 --name debian-apache-container -m 900M --cpus 0.3 debian-apache:1.0
+
+# Verificar o container:
+  $ docker ps
+
+# Verificar o ip do container
+  docker network inspect bridge
+```
+
+#### Site no Ar
+![NewWebite](./assets/images/2.png)
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
