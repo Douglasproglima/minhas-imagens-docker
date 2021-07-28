@@ -83,8 +83,11 @@
   CMD python /opt/app.py
 			
 # 5 - Buildar a imagem a partir do Dockerfile
+# 5.0 - Baixando a imagem:
+$ docker pull python
+
 # 5.1 - Estrutura: docker build diretorio-dockerfile -t nome-imagem
-$ docker build . -tubuntu-python-dockerfile
+$ docker build -t ubuntu-python-dockerfile .
 			
 # 6 - Rodar o python a parti da imagem criada
 $ docker run -it --name meu-app-py minha-img-ubuntu-py
@@ -165,41 +168,64 @@ Executando o procedimento acima, é gerado a imagem:
 #### Site no Ar
 ![NewWebite](./assets/images/2.png)
 
-### Criando o Container Python
+#### Container Python
 ---
+##### Baixando a Imagem Oficial
 ```sh
-# Acessando o workspace-python, tenho o dockerfile:
-# Versão 3 da imagem Python oficial
-FROM python:3
+  docker pull python
+```
+##### DockerFile
+![Dockerfile-python](./assets/images/2.1.png)
 
-# Cria a pasta app dentro do dir /usr/src/
-WORKDIR /usr/src/app
-
-# o app.py será copiado para esse diretório
-COPY fibonacci.py /usr/src/app
-
-# Executa o app.py e força a estar no diretório onde esta o arquivo
-# Porém como no WORKDIR setei o dir, então no CMD eu já estou no dir onde esta
-# o arquivo a ser executado, então bastaria passar no segundo parametro
-# fibonacci.pyCMD [ "python", "./fibonacci.py" ]
-CMD [ "python", "/usr/src/app/fibonacci.py" ]
-
-# Criando a imagem
-  $ docker image build -t img-fibonacci-python:1.0
-
+#### Criando a imagem
+```sh
+  $ docker image build -t img-fibonacci-python:1.0 .
 ```
 ![Image-Python](./assets/images/3.png)
 
+#### Gerando o container:
 ```sh
-# Gerando o container:
   $ docker run -ti --name container-fibonacci-python img-fibonacci-python:1.0
 ```
 ![Container-Python](./assets/images/4.png)
 
+#### Executando a aplicação:
 ```sh
-# Executando a aplicação:
-  $ docker exec -it run-fibonacci-python python3 ./fibonacci.py
+  $ docker exec -it container-fibonacci-python python3 ./fibonacci.py
 ```
 ![App-Fibonacci](./assets/images/5.png)
+
+### Usando Stages Diferentes
+---
+#### Objetivo:
+  Objetivo é ter uma imagem do golang para gerar o binário executavel e outra imagem do ubuntu para executar o app gerado.
+
+#### Baixando as Imagens:
+```sh
+# Imagem do Golang
+$ docker pull golang
+
+# Imagem do Alpine -> 5MB
+$ docker pull alpine
+```
+
+#### Fibonacci em Golang
+![File.go](./assets/images/6.png)
+
+#### Dockerfile
+![DockerFile-Go](./assets/images/7.png)
+
+#### Gerando a Imagem
+```sh
+$ docker image build -t img-fibonacci-go:1.0 .
+```
+#### Executando o binário gerado
+```sh
+docker run -it --name container-fibonacci-go img-fibonacci-go:1.0
+# OU
+$ docker start container-fibonacci-go
+$ docker exec -it container-fibonacci-go /bin/sh -c ./fibonacci.go
+```
+![Run-app.go](./assets/images/8.png)
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
