@@ -148,6 +148,6 @@ $ docker image build -t debian-apache:1.0 .
 #### imagem Debian-Apache
 ____
 Executando o procedimento acima, é gerado a imagem:
-![Debian-Apache](../assets/images/1.png)
+![Debian-Apache](./assets/images/1.png)
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
