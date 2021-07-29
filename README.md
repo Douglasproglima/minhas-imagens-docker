@@ -29,7 +29,7 @@
 
 ```
 
-#### CRIANDO A PRÓPRIA IMAGEM
+### CRIANDO A PRÓPRIA IMAGEM
 ---
 ```sh
 1 - Criar um container ubuntu
@@ -227,5 +227,25 @@ $ docker start container-fibonacci-go
 $ docker exec -it container-fibonacci-go /bin/sh -c ./fibonacci.go
 ```
 ![Run-app.go](./assets/images/8.png)
+
+### Subindo a Imagem para DockerHub
+---
+#### 1 - Criar a Conta no Dockerhub
+<a href="https://hub.docker.com/" target="_blank">Dockerhub</a>
+
+#### 2 - Logar na Conta Dockerhub
+```sh
+# No terminal logar na conta dockerhub
+$ docker login
+```
+
+#### 3 - Gerar a Imagem
+```sh
+# No diretório Workspace-golang
+# Estrutura: 
+#docker build dir -t nome-usuario/nome-imagem:target
+$ docker build . -t douglasproglima/img-fibonacci-golang:1.0
+```
+![Imagem-Docker](./assets/images/9.png)
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
