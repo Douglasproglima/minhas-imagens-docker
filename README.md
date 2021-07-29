@@ -248,4 +248,74 @@ $ docker build . -t douglasproglima/img-fibonacci-golang:1.0
 ```
 ![Imagem-Docker](./assets/images/9.png)
 
+### Criando um Servidor de Imagens Docker
+---
+#### Baixar a image do registry
+```sh
+$ docker pull registry
+```
+#### Criar o Container do Registry
+```sh
+$ docker run -d -p 5000:5000 --restart:always --name servidor-imagens-docker registry:2
+```
+
+#### Deslogar do Dockerhub
+```sh
+$ docker logout
+```
+#### Subir Imagem para o Servidor Docker Local
+Para enviar a imagem para o servidor criado, é necessário que a imagem
+começe com o nome do container criado com o Registry.
+Nesse caso irei copiar a imagem e renomear a image do golang
+Exemplo:
+```sh
+# docker image tag id_image ip-servidor:porta/nome-nova-imagem
+$ docker image tag 40479ebeb05e localhost:5000/img-fibonacci-golang:2.0
+# OU
+$ docker image tag 40479ebeb05e ip-servidor:5000/img-fibonacci-golang:2.0
+
+# Validar a copia da imagem:
+$ docker images
+
+# Checar se há imagens no servidor docker local e
+# curl ip-servidor:porta/v2/_catalog
+curl localhost:5000/v2/_catalog
+# OU
+curl ip-servidor:5000/v2/_catalog
+
+# Habilitar segurança na rede interna para informar para o docker o envio de imgs
+$ nano /etc/docker/daemon.json
+
+# Add o conteúdo no arquivo:
+{ "insecure-registries":["192.168.1.7:5000"] }
+
+# Após alteração reinicie o docker
+$ sudo service docker restart docker
+
+# Subir a imagem para o servidor docker local
+$ docker push localhost:5000/img-fibonacci-golang:2.0
+#OU
+$ docker push ip-servidor:5000/img-fibonacci-golang:2.0
+
+# Conferir se está ok:
+curl localhost:5000/v2/_catalog
+# OU
+curl ip-servidor:5000/v2/_catalog
+
+# Remover e Baixar a Imagem do Servidor
+$ docker rmi id-image -f
+
+# Baixar a imagem do Servidor
+$ docker pull ip-servidor:5000/img-fibonacci-golang:2.0
+
+# Criar/Executar o Container
+$ docker run -it --name container-fibonacci-go 192.168.1.7:5000/img-fibonacci-golang:2.0
+
+# Nas demais vezes basta subir o container e executar o app
+$ docker start id-container OU nome-container
+$ docker exec -it id-container ou nome-container /bin/sh -c ./fibonacci.go
+
+```
+
+
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
