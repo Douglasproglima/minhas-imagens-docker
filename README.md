@@ -316,6 +316,23 @@ $ docker start id-container OU nome-container
 $ docker exec -it id-container ou nome-container /bin/sh -c ./fibonacci.go
 
 ```
+## Docker Compose
+---
+#### Compatibilidade
+---
+<a href="https://docs.docker.com/compose/compose-file/compose-versioning/">Versões Docker X Versões Docker-Compose</a>
+
+####  Instalar Docker-Compose
+---
+```sh
+$ sudo apt-get update
+
+$ sudo apt-get install -y docker-compose
+```
+
+#### Exemplo YAML
+---
+![Estrutura-YAML](./assets/images/10.png)
 
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
