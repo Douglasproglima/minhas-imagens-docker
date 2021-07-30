@@ -333,4 +333,9 @@ $ sudo apt-get install -y docker-compose
 ---
 ![Containers](./assets/images/11.png)
 
+```sh
+# Subir os dois containers:
+$ docker-compose up
+```
+
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)

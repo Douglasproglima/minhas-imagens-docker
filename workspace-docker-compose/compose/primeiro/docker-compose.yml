@@ -1,0 +1,42 @@
+version: '3.5'
+
+services:
+  mysqlsrv:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "Senha123"
+      MYSQL_DATABASE: "testedb"
+    ports:
+      - "3306:3306"
+    volumes:
+      - /data/mysql-C:/var/lib/mysql
+    networks:
+      - minha-rede
+
+  #sqlserver1: https://dbafromthecold.com/2020/07/17/sql-server-and-docker-compose/
+  #  build: 
+  #    context: .
+  #    dockerfile: dockerfile
+  #  ports:  
+  #    - "15789:1433"
+  #  env_file:
+  #    - sqlserver.env
+  #    - sapassword.env
+  #  volumes: 
+  #    - /data/sqlserver/system:/var/opt/mssql/
+  #    - /data/sqlserver/data:/var/opt/sqlserver/data
+  #    - /data/sqlserver/log:/var/opt/sqlserver/log
+  #    - /data/sqlserver/backup:/var/opt/sqlserver/backup
+  #  networks:
+  #    - minha-rede
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    networks:
+      - minha-rede
+
+networks:
+  minha-rede:
+    driver: bridge
