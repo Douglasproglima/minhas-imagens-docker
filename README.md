@@ -25,10 +25,6 @@
   <img alt="License" src="https://img.shields.io/badge/license-MIT-brightgreen">
 </p>
 
-```sh
-
-```
-
 ### CRIANDO A PRÓPRIA IMAGEM
 ---
 ```sh
@@ -56,12 +52,12 @@
 ```sh	
 #1 - Criar o diretório /minhas-imagens/app-python/
 #2 - Dentro criar o arquivo app.py que irei copiar para dentro do container
-  $ nano app.py
+$ nano app.py
 #2.1 - Dentro do arquivo add
-  $ name = input("Whats your name brow? ")
-  $ print (name)
+$ name = input("Whats your name brow? ")
+$ print (name)
 #3 - Criar o arquivo Dockerfile, esse é o arquivo responsável por criar a imagem
-  $ nano Dockerfile
+$ nano Dockerfile
 			
   #OBS: Palavras reservadas do Dockerfile
   #*FROM -> Indica a base do container
@@ -96,18 +92,18 @@ $ docker run -it --name meu-app-py minha-img-ubuntu-py
 ---
 ```sh
 # 1 - Criar a pasta site:
- $ mkdir minhas-imagens-docker/debian-apache/site
- $ cd debian-apache/site
+$ mkdir minhas-imagens-docker/debian-apache/site
+$ cd debian-apache/site
 # 2 - baixar os arquivos:
 $ wget http://site1368633667.hospedagemdesites.ws/site1.zip
 			
 #3 - Para enviar os arquivos compactados através do comando nativo do docker é necessário ter a extensão .tar
 #como o arquivo baixado está como .zip, então descompacto e depois compacto com o tar novamente:
-  $ unzip site1.zip
-  $ rm -R site1.zip
-  $ tar -czf site.tar ./
+$ unzip site1.zip
+$ rm -R site1.zip
+$ tar -czf site.tar ./
 # 4 - Copiar o site.tar para pasta anteriormente
-  $ cp site.tar ../
+$ cp site.tar ../
 # 5 - Criar o arquivo Dockerfile e inserir o conteúdo:
   FROM debian
 
@@ -146,7 +142,7 @@ $ wget http://site1368633667.hospedagemdesites.ws/site1.zip
 
 # 6 - Gerar a imagem
 # Estrutura: docker image build -t nome-image:versao ./diretorio-do-dockerfile
-  $ docker image build -t debian-apache:1.0 .
+$ docker image build -t debian-apache:1.0 .
 ```
 #### Imagem Debian-Apache Gerada:
 ____
@@ -156,13 +152,13 @@ Executando o procedimento acima, é gerado a imagem:
 #### Criando o container debian-apache-container
 ```sh
 # Subindo o container a partir da imagem criada
-  $ docker run -dti -p 80:80 --name debian-apache-container -m 900M --cpus 0.3 debian-apache:1.0
+$ docker run -dti -p 80:80 --name debian-apache-container -m 900M --cpus 0.3 debian-apache:1.0
 
 # Verificar o container:
-  $ docker ps
+$ docker ps
 
 # Verificar o ip do container
-  docker network inspect bridge
+$ docker network inspect bridge
 ```
 
 #### Site no Ar
@@ -172,7 +168,7 @@ Executando o procedimento acima, é gerado a imagem:
 ---
 ##### Baixando a Imagem Oficial
 ```sh
-  docker pull python
+$ docker pull python
 ```
 ##### DockerFile
 ![Dockerfile-python](./assets/images/2.1.png)
@@ -221,7 +217,7 @@ $ docker image build -t img-fibonacci-go:1.0 .
 ```
 #### Executando o binário gerado
 ```sh
-docker run -it --name container-fibonacci-go img-fibonacci-go:1.0
+$ docker run -it --name container-fibonacci-go img-fibonacci-go:1.0
 # OU
 $ docker start container-fibonacci-go
 $ docker exec -it container-fibonacci-go /bin/sh -c ./fibonacci.go
@@ -314,7 +310,6 @@ $ docker run -it --name container-fibonacci-go 192.168.1.7:5000/img-fibonacci-go
 # Nas demais vezes basta subir o container e executar o app
 $ docker start id-container OU nome-container
 $ docker exec -it id-container ou nome-container /bin/sh -c ./fibonacci.go
-
 ```
 ## Docker Compose
 ---
@@ -334,5 +329,8 @@ $ sudo apt-get install -y docker-compose
 ---
 ![Estrutura-YAML](./assets/images/10.png)
 
+### Criando 2 Containers
+---
+![Containers](./assets/images/11.png)
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
