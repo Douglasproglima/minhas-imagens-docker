@@ -338,4 +338,77 @@ $ sudo apt-get install -y docker-compose
 $ docker-compose up
 ```
 
+### NextCloud + Redis + MariaDB
+---
+```sh
+# Criar a pasta nextcloud-redis-mariadb
+mkdir nextcloud-redis-mariadb
+
+cd nextcloud-redis-mariadb
+
+touch docker-compose.yaml
+```
+#### docker-compose.yaml
+---
+Observação: Não usar a imagem mais recente do mariadb, pois o nextCloud está com BUG na integração com essa imagem.
+```sh
+version: '3.7'
+services:
+  nc:
+    image: nextcloud:apache
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - nc_data:/var/www/html
+    networks:
+      - redisnet
+      - dbnet
+    environment:
+      - REDIS_HOST=redis
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=nextcloud
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - redisnet
+    expose:
+      - 6379
+  db:
+    image: mariadb:10.5.11
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - dbnet
+    environment:
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_ROOT_PASSWORD=nextcloud
+      - MYSQL_PASSWORD=nextcloud
+    expose:
+      - 3306
+volumes:
+  db_data:
+  nc_data:
+networks:
+  dbnet:
+  redisnet:
+```
+#### NextCloud
+![NextCloud](./assets/images/12.png)
+
+#### Checando os arquivos criados no Volume
+```sh
+# Navegar na maquina hospedeira
+$ cd /var/lib/docker/volumes/nextcloud-redis-mariadb_db_data/
+$ ls
+```
+![Volumes NestCloud](./assets/images/13.png)
+
+
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
