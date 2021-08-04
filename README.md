@@ -410,5 +410,54 @@ $ ls
 ```
 ![Volumes NestCloud](./assets/images/13.png)
 
+#### Docker Machine
+---
+Com o docker machine é possível realizar o deploy do ambiente local na infra que desejar, como por exemplo: AWS, Digital OCean, Google Cloud, Azure etc...
+
+Com posso gerenciar máquinas na nuvem através da minha máquina local.
+
+#### Instalação
+---
+
+<a href="https://github.com/docker/machine/releases/">Avaliar as realeses no resotório oficial do github</a>
+
+<a href="https://docs.docker.com/machine/install-machine/">Doc Oficial</a>
+
+```sh
+$ curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-`uname -s`-`uname -m` >/tmp/docker-machine &&
+    chmod +x /tmp/docker-machine &&
+    sudo cp /tmp/docker-machine /usr/local/bin/docker-machine
+```
+
+##### Principais Comandos
+---
+```sh
+# CREATE: Por default se não for informado nenhum parâmetro, será criado uma máquina com 1024 mb de RAM, 20GB de HD e um core de CPU
+$ docker-machine create nome-maquina
+
+# LS: Irá listar todos os hosts disponíveis em sua máquina
+$ docker-machine ls
+
+# ENV: Irá listar todas as variáveis the ambiente que precisam ser configuradas
+$ eval $(docker-machine env nome-maquina)
+
+# IP: Lista todos os IPs do nosso host Docker
+$ docker-machine ip nome-maquina
+
+# SSH: Acessar via SSH o host Docker e executar comandos Linux dentro dele
+$ docker-machine ssh nome-maquina
+
+# INSPECT: Mostra alguns detalhes do host Docker
+$ docker-machine inspect first-host-box
+
+# START/STOP: Irá iniciar/parar o host Docker 
+$ docker-machine start nome-maquina
+# OU
+$ docker-machine stop nome-maquina
+
+# RM: Remove o host Docker
+$ docker-machine rm nome-maquina
+```
+
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
