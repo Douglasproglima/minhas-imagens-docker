@@ -434,6 +434,8 @@ $ curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-mac
 ```sh
 # CREATE: Por default se não for informado nenhum parâmetro, será criado uma máquina com 1024 mb de RAM, 20GB de HD e um core de CPU
 $ docker-machine create nome-maquina
+# OU
+$ docker-machine create --driver virtualbox --virtualbox-disk-size "50000" --virtualbox-memory "2048" nome-maquina  
 
 # LS: Irá listar todos os hosts disponíveis em sua máquina
 $ docker-machine ls
