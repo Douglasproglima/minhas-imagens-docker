@@ -488,8 +488,8 @@ $ nano credentials
 
 ##### Corpo do arquivo:
 [default]
-aws_access_key_id = AKIA6ATJRN7F6N6Q555I
-aws_secret_access_key = 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
+aws_access_key_id = chave-de-acesso
+aws_secret_access_key = chave-de-acesso-secreta
 
 ```sh
 $ cd .aws
