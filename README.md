@@ -463,8 +463,54 @@ $ docker-machine rm nome-maquina
 
 #### Criar Amazon Web Service EC2 Instance
 ---
-
 https://docs.docker.com/machine/examples/aws/
 
+
+#### Docker Swarm
+Para criar máquina no EC2 pelo docker machine, existe uma série de passo.
+1 - Criar o usuário com a permissão admin
+Acessar https://console.aws.amazon.com/
+Depois vá em IAM -> Novo Usuário
+
+Anota os dados do novo usuário:
+  usuário: nome-novo-user
+  senha: nova-senha
+  Politica: admin
+  ID da chave de acesso: chave-de-acesso
+  Chave de acesso secreta: chave-de-acesso-secreta
+
+##### Criando a maquina no EC2
+```
+$ mkdir /home/seu-usuario-local/.aws
+$ touch credentials
+$ nano credentials
+```
+
+##### Corpo do arquivo:
+[default]
+aws_access_key_id = AKIA6ATJRN7F6N6Q555I
+aws_secret_access_key = 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
+
+```sh
+$ cd .aws
+$ docker-machine create --driver amazonec2 --amazonec2-region "sa-east-1" my-aws-vm
+```
+
+Validar a Maquina
+```sh
+$ docker-machine ls
+```
+
+Acessar a máquina:
+```sh
+$ docker-machine ssh my-aws-vm
+```
+
+```sh
+#Cria os nodes no EC2
+$ docker-machine create --driver amazonec2 --amazonec2-region "sa-east-1" dw1
+$ docker-machine create --driver amazonec2 --amazonec2-region "sa-east-1" dw2
+$ docker-machine create --driver amazonec2 --amazonec2-region "sa-east-1" dw3
+```
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
