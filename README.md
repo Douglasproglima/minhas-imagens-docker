@@ -465,8 +465,8 @@ $ docker-machine rm nome-maquina
 ---
 https://docs.docker.com/machine/examples/aws/
 
-
-#### Docker Swarm
+#### Docker Swarm Com AWS
+---
 Para criar máquina no EC2 pelo docker machine, existe uma série de passo.
 1 - Criar o usuário com a permissão admin
 Acessar https://console.aws.amazon.com/
@@ -480,6 +480,27 @@ Anota os dados do novo usuário:
   Chave de acesso secreta: chave-de-acesso-secreta
 
 ##### Criando a maquina no EC2
+---
+É necessário criar a rede na AWS para que as VM comuniquem entre si.
+
+1 - Para isso acessar o VPC e criar uma nova rede (https://console.aws.amazon.com/vpc/home?region=us-east-1#CreateVpc:)
+1.1 - Dar o nome da rede
+1.2 - Definir a faixa de IP. Exemplo: Ip padrão da AWS 172.31.0.0/24
+![Volumes NestCloud](./assets/images/14.png)
+1.3 - Anotar o ID gerado, pois ao criar a VM no EC2 iremos precisar desse ID:
+1.4 - Criar a subrede: https://console.aws.amazon.com/vpc/home?region=us-east-1#CreateSubnet:
+![Volumes NestCloud](./assets/images/16.png)
+1.5 - Criar o gateway (https://console.aws.amazon.com/vpc/home?region=us-east-1#CreateInternetGateway:)
+OBS: Anotar o ID do gateway pois será usado para criar a nova rota e relacionar com esse gateway criado.
+![Volumes NestCloud](./assets/images/17.png)
+1.5.1 - Atachar o gateway criado no botão superior direito.
+1.6 - Criar o roteamento para que o gateway tenha acesso a rede-dw
+	https://console.aws.amazon.com/vpc/home?region=us-east-1#RouteTables:
+	OBS: Por padrão ao criar uma rede a mesma é relacionada ao gateway, porém é necessário realizar ajustes.
+![Volumes NestCloud](./assets/images/18.png)
+
+Obs: Esses são os passos essenciais, sem a rede, subrede, gateway e rota não há como criar as máquinas de forma a usar o docker swarm e gerenciar localmente
+
 ```
 $ mkdir /home/seu-usuario-local/.aws
 $ touch credentials
