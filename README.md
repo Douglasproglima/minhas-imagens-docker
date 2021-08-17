@@ -618,9 +618,94 @@ $ unzip site1.zip
 $ rm site1.zip
 ```
 
-##### Validar o Replicamento no Cluster
+##### Replicar Imagem Apache nos 3 nodes
 ```sh
+# Criar o serviço e montar o volume criado anteriormente
 
+docker service create --name web-server --replicas 3 -dt -p 8080:80 --mount type=volume,src=app,dst=/usr/local/apache2/htdocs/ httpd
+
+# Validar o serviço criado
+$ docker service ls
+
+# Liberar a porta 8080 no AWS -> Grupos de Segurança.
+
+Mesmo procedimento feito anteriormente na etapa "# Definir a VM Manager e Worker's".
+
+Liberar HTTP na porta 80 para todos 0.0.0.0/0
+
+e também para o TCP Personalizado na porta 8080 para todos 0.0.0.0/0
 ```
+![Volumes NestCloud](./assets/images/21.png)
+
+Validar o ip públic da dw1:
+No Painel da AWS: EC2 -> Instâncias -> Selecionar dw1 Grid/Aba Detalhes ->  Campo: Endereço IPv4 público
+Acessa no browser o ip público:8080
+![Volumes NestCloud](./assets/images/22.png)
+
+
+#### Replica os arquivos do volume dw1 para as demais VMs
+---
+Se analisarmos o volume entre as VM dw2 e dw3 a pasta app/_data possui apenas o arquivo index.html
+
+Diferente do volume do dw1 que possui todos os arquivos do site.html
+
+Nesse para replicar os arquivos entre os nodes, é necessário criar um serviço NFS, onde o dw1 será o servidor e os demais nodes serão os clientes.
+
+```sh
+# instalar o serviço NFS
+$ sudo apt-get install nfs-server
+
+# Validar o status do nfs-server
+$ systemctl status nfs-server
+
+# Habilitar Sempre caso a VM for reiniciada
+$ systemctl enable nfs-server
+
+# Replicar o volume para os demais diretórios:
+$ nano /etc/exports
+
+# Dentro do arquivo add na útima linha:
+/var/lib/docker/volumes/app/_data *(rw,sync,subtree_check)
+
+Explicando as váriaveis dentro do *():
+*: Liberado para qualquer endereço
+(
+  rw: Permissão de leitura e escrita
+  sync: Sincronização
+  subtree_check: Liberar as sub pastas do diretório.
+)
+
+# Exportar o diretório compartilhado anteiormente:
+$ exportfs -ar
+
+Acessar a VM dw2 e dw3 e instalar o nfs-common:
+# dw2
+$ apt-get install nfs-common 
+```
+
+#### Criar Nova regra de entrada AWS para o NFS
+1 - EC2 -> Instâncias -> Selecione a linha do VM -> Grid/Aba Inferior: Segurança -> Grupos de segurança -> Clicar em cima do ID do grupo de segurança
+
+2 - Button Editar regras de entrada -> Button Adicionar Regra:
+  Campos: 
+    NFS: 2049
+    Origem...........: 0.0.0.0/0 # Liberado para todos os IP's 
+3 - Button Salvar Regra
+4 - Fazer a mesma coisa para "Todos os UDP"
+
+![Volumes NestCloud](./assets/images/23.png)
+
+```sh
+# Acessar a dw2 e dw3
+validar se tem acesso a pasta compartilhada ente a dw1 e a dw2
+$ showmount -e ip-dw1
+
+# Mapear do diretório app/_data do dw1 para o dw2 e dw3:
+É importante executar o comando como root para que possa ser sobrescrito o diretório final /app/_data/:
+
+$ mount ip-dw1:/var/lib/docker/volumes/app/_data /var/lib/docker/volumes/app/_data
+```
+![Volumes NestCloud](./assets/images/24.png)
+
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
