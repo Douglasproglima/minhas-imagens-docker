@@ -513,25 +513,114 @@ aws_access_key_id = chave-de-acesso
 aws_secret_access_key = chave-de-acesso-secreta
 
 ```sh
-$ cd .aws
-$ docker-machine create --driver amazonec2 --amazonec2-region "sa-east-1" my-aws-vm
+#Cria os nodes no EC2
+$ docker-machine create --driver amazonec2 --amazonec2-region "us-east-1" --amazonec2-zone a --amazonec2-vpc-id "vpc-id" --amazonec2-subnet-id "subnet-id" dw1
+$ docker-machine create --driver amazonec2 --amazonec2-region "us-east-1" --amazonec2-zone a --amazonec2-vpc-id "vpc-id" --amazonec2-subnet-id "subnet-id" dw1
+$ docker-machine create --driver amazonec2 --amazonec2-region "us-east-1" --amazonec2-zone a --amazonec2-vpc-id "vpc-id" --amazonec2-subnet-id "subnet-id" dw1
 ```
 
-Validar a Maquina
+Validar a VM
 ```sh
 $ docker-machine ls
 ```
 
-Acessar a máquina:
+Acessar a VM via SSH:
 ```sh
-$ docker-machine ssh my-aws-vm
+$ docker-machine ssh dw1
+
+# Alterar a senha do root da dw1
+$ sudo passwd root
+
+$ docker-machine ssh dw2
+
+# Alterar a senha do root da dw2
+$ sudo passwd root
+
+$ docker-machine ssh dw3
+
+# Alterar a senha do root da dw3
+$ sudo passwd root
 ```
 
+# Definir a VM Manager e Worker's
 ```sh
-#Cria os nodes no EC2
-$ docker-machine create --driver amazonec2 --amazonec2-region "sa-east-1" dw1
-$ docker-machine create --driver amazonec2 --amazonec2-region "sa-east-1" dw2
-$ docker-machine create --driver amazonec2 --amazonec2-region "sa-east-1" dw3
+# logar como root na dw1
+$ su
+# Inicializar o swarm
+$ docker swarm init
+
+# anotar o token gerado para relacionar(join) as VM Worke's(dw2 e dw3)
+$ docker swarm join --token TOKEN IP:2377
+
+OBS: ao final do token irá contér a IP:Porta
+no próximo passo será necessário validar se essa porta está liberada no grupo
+de segurança no painel da AWS.
+
+# Acessar o aws e validar qual grupo de segurança a dw1 foi adicionada:
+EC2 -> Instâncias -> Selecione a linha do VM -> Grid/Aba Inferior: Segurança -> Grupos de segurança: sg-0b4f5c4ba3c4d9d58 (docker-machine)
+
+OBS: Geralmente as VMs criadas são adicionadas no mesmo grupo de segurança.
+O importante aqui é analisar se a porta definida no passo anterior após dar o init swarm para VM Manager e validar se a porta está liberada no grupo de segurança, geramente no comando init é relacionado a porta 2377 e no painel da AWS fica liberado a porta 2376, nesse caso temos que add a porta 2377 ao grupo de segurança relacionada a VM.
+
+Nesse caso criar uma nova regra no grupo de segunraça relacionada ao VM:
+1 - EC2 -> Instâncias -> Selecione a linha do VM -> Grid/Aba Inferior: Segurança -> Grupos de segurança -> Clicar em cima do ID do grupo de segurança
+
+2 - Button Editar regras de entrada -> Button Adicionar Regra:
+  Campos: 
+    TCP Personalizado: 2377
+    Origem...........: 0.0.0.0/0 # Liberado para todos os IP's 
+3 - Button Salvar Regra
+
+OBS: Com o passo acima, agora posso adicionar VMs join a VM manager(dw1)
+
+# logar como root na dw3
+$ su
+
+# Relacionar a dw2 a VM Manager dw1
+$ docker swarm join --token TOKEN IP:2377
+
+# logar como root na dw3
+$ su
+
+# Relacionar a dw3 a VM Manager dw1
+$ docker swarm join --token TOKEN IP:2377
+
+```
+![Volumes NestCloud](./assets/images/19.png)
+
+#### Promover as VMs dw2 e dw3  como Managers
+----
+```sh
+$ docker node promote dw2
+
+$ docker node promote dw3
+```
+![Volumes NestCloud](./assets/images/20.png)
+
+
+#### Criar Volume para Usar no Cluster
+----
+```sh
+# No dw1 como root criar o volume app
+$ docker volume create app
+
+# Acessar a pasta onde são criados os volumes do docker:
+$ cd /var/lib/docker/volumes/app/_data/
+
+# Add o site teste ao volume app:
+$ wget http://site1368633667.hospedagemdesites.ws/site1.zip
+
+# Instalar o unzip
+$ apt-get install unzip -Y
+
+# Decompactar o site
+$ unzip site1.zip
+$ rm site1.zip
+```
+
+##### Validar o Replicamento no Cluster
+```sh
+
 ```
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
