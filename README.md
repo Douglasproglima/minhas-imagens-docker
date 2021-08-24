@@ -886,13 +886,13 @@ Conferir a Replica dos Serviços na AWS:
   $ docker service ps php-app_web
 ```
 
-CRIAR O ARQUIVO php-phpmyadmin.ini no diretório 
+CRIAR O ARQUIVO uploads.ini no diretório 
 ```sh
 # Conferir em qual node foi add o phpmyadmin
   $ docker service ps php-app_phpmyadmin
 
 # acessar o node e criar o arquivo na pasta do volume
-  $ cd /var/lib/docker/volume/php_app_php-ini/_data
+  $ cd /var/lib/docker/volumes/php_app_php-ini/_data/
 
   $ nano uploads.ini
 
@@ -1000,6 +1000,59 @@ Validar se o arquivo index.php criado no node 1 foi replicado para os nodes 2 e 
 
 ![Volumes NestCloud](./assets/images/40.png)
 
+#### Teste de Carga com o Loader.io
+
+Caso reinicie ou desligue as VM, o ip público é alterado, sendo assim será necessário alterar os arquivos
+nano export/meus-composes/docker-compose.yml
+e nano /var/lib/docker/volumes/php-app_app/_data/index.php
+adicionando o ip público para que o MySQL seja acessado externamente.
+
+Start do MySQL na VM Manager:8080
+```sh
+$ docker ps -a
+
+$ docker start mysql-A
+```
+
+1 - Acessar o site https://loader.io fazer o login, no menu superior "Target host", clicar no botão New Host
+2 - no campo Domain, informar o IP-PUBLICO da VM Manager da AWS. Exemplo: http://1123.12.23.02
+3 - Acessar a pasta onde está aplicação no diretório: cd /var/lib/docker/volumes/php-app_app/_data/
+4 - Criar o arquivo com o mesmo nome sugerido no site loader.io adicionando a extensão .txt
+
+![Volumes NestCloud](./assets/images/41.png)
+
+5 - Adicionar o mesmo conteúdo sugerido no site loader.io:
+
+![Volumes NestCloud](./assets/images/42.png)
+
+6 - Salvar o arquivo, voltar ao site loader.io e clicar no botão Verify. Após isso será retornar a mensagem de Congrats.
+
+7 - Clicar no botão New Test, preencher todos os campos conforme imagem abaixo:
+
+![Volumes NestCloud](./assets/images/43.png)
+
+OBS: Na configuração acima será adicionado 250 registros em no máximo 30 segundos no IP informado acessando app index.php.
+
+8 - Validar o teste de carga executado. Acessar o ip-publico:8080 informar o usuário e senha do MySQL para acessar o phpMyAdmin, executar o comando abaixo para validar a qtde de registros existentes, pode ser feito antes e depois de executar o teste de carga:
+```sh
+$ Select COUNT(1) From dados
+```
+
+Após o termino do teste, será gerado alguns KPI's indicando o tempo de respostas, ocilações e outros indicadores.
+
+![Volumes NestCloud](./assets/images/44.png)
+
+Analisando o log do serviço na VM Manager para garantir que houve um stress de carga:
+
+```sh
+$ docker ps
+
+$ docker logs id-servico
+```
+
+![Volumes NestCloud](./assets/images/45.png)
+
+
 #### Load Balance AWS
 ---
 
@@ -1050,7 +1103,5 @@ OBS: É preciso aguardar alguns minutos para que o DNS seja propagado. Em média
 ```sh
 
 ```
-
-
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
