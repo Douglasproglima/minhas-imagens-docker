@@ -500,6 +500,9 @@ Nome
 Zona de Disponilidade
 IPv4 CIDR: 172.31.0.0/24
 
+![Volumes NestCloud](./assets/images/46.png)
+
+
 ![Volumes NestCloud](./assets/images/16.png)
 
 1.5 - Criar o gateway (https://console.aws.amazon.com/vpc/home?region=us-east-1#CreateInternetGateway:)
@@ -622,6 +625,9 @@ $ docker swarm join --token TOKEN IP:2377
 $ docker node promote dw2
 
 $ docker node promote dw3
+
+# DEFINIR LABEL PARA VM MANAGER
+$ docker node update --label-add dc=vm1 vm1
 ```
 ![Volumes NestCloud](./assets/images/20.png)
 
