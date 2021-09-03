@@ -583,7 +583,7 @@ $ docker swarm init
 # anotar o token gerado para relacionar(join) as VM Worke's(dw2 e dw3)
 $ docker swarm join --token TOKEN IP:2377
 
-OBS: ao final do token irá contér a IP:Porta
+OBS: Ao final do token irá contér a IP:Porta
 no próximo passo será necessário validar se essa porta está liberada no grupo
 de segurança no painel da AWS.
 
@@ -594,6 +594,7 @@ OBS: Geralmente as VMs criadas são adicionadas no mesmo grupo de segurança.
 O importante aqui é analisar se a porta definida no passo anterior após dar o init swarm para VM Manager e validar se a porta está liberada no grupo de segurança, geramente no comando init é relacionado a porta 2377 e no painel da AWS fica liberado a porta 2376, nesse caso temos que add a porta 2377 ao grupo de segurança relacionada a VM.
 
 Nesse caso criar uma nova regra no grupo de segunraça relacionada ao VM:
+
 1 - EC2 -> Instâncias -> Selecione a linha do VM -> Grid/Aba Inferior: Segurança -> Grupos de segurança -> Clicar em cima do ID do grupo de segurança
 
 2 - Button Editar regras de entrada -> Button Adicionar Regra:
@@ -725,7 +726,9 @@ $ apt-get install nfs-common
   Campos: 
     NFS: 2049
     Origem...........: 0.0.0.0/0 # Liberado para todos os IP's 
+
 3 - Button Salvar Regra
+
 4 - Fazer a mesma coisa para "Todos os UDP"
 
 ![Volumes NestCloud](./assets/images/23.png)
@@ -1021,8 +1024,11 @@ $ docker start mysql-A
 ```
 
 1 - Acessar o site https://loader.io fazer o login, no menu superior "Target host", clicar no botão New Host
+
 2 - no campo Domain, informar o IP-PUBLICO da VM Manager da AWS. Exemplo: http://1123.12.23.02
+
 3 - Acessar a pasta onde está aplicação no diretório: cd /var/lib/docker/volumes/php-app_app/_data/
+
 4 - Criar o arquivo com o mesmo nome sugerido no site loader.io adicionando a extensão .txt
 
 ![Volumes NestCloud](./assets/images/41.png)
@@ -1039,7 +1045,8 @@ $ docker start mysql-A
 
 OBS: Na configuração acima será adicionado 250 registros em no máximo 30 segundos no IP informado acessando app index.php.
 
-8 - Validar o teste de carga executado. Acessar o ip-publico:8080 informar o usuário e senha do MySQL para acessar o phpMyAdmin, executar o comando abaixo para validar a qtde de registros existentes, pode ser feito antes e depois de executar o teste de carga:
+8 - Validar o teste de carga executado. 
+Acessar o ip-publico:8080 informar o usuário e senha do MySQL para acessar o phpMyAdmin, executar o comando abaixo para validar a qtde de registros existentes, pode ser feito antes e depois de executar o teste de carga:
 ```sh
 $ Select COUNT(1) From dados
 ```
@@ -1067,18 +1074,27 @@ $ docker logs id-servico
 ![Volumes NestCloud](./assets/images/25.png)
 
 > 2 - Existem 4 tipos para se criar o Load Balance:
+
 > 2.1 - HTTP/HTTPS: Nesse tipo, caso tenha sub-redes, é possível realizar o balance por zona(São Paulo, California etc.)
+
 > 2.3 - TCP/TLS/UDP:
+
 > 2.4 - IP:
+
 > 2.5 - Geração Anterior: Como tenho apenas uma única sub-rede, vou o modo clássico
 
 ![Volumes NestCloud](./assets/images/26.png)
 
 > 3 - Preencher os Campos:
+
 -> Nome do Load Balance
+
 -> Criar LB Interno: Nome da rede criada nos passos anteriores
+
 -> Criar um load balance interno: Caso o tráfego seja interno na AWS. No exemplo eu estou usando o tráfego externo, então deixo essa opção desmarcado.
+
 -> Protocolo e Porta: Informar HTTP e porta 80, conforme será definido posteriormente
+
 -> Selecione a SubRede
 
 ![Volumes NestCloud](./assets/images/27.png)
@@ -1105,9 +1121,57 @@ OBS: É preciso aguardar alguns minutos para que o DNS seja propagado. Em média
 
 ![Volumes NestCloud](./assets/images/32.png)
 
+##### Resumo do Fluxo
+1 - USUARIO
+	anotar-key-id
+	anotar-access-key
 
-```sh
+1.1 - Criar a pasta .aws e arquivo credentials com o conteúdo:
+	[default]
+	aws_access_key_id = anotar-key-id
+	aws_secret_access_key = access-key
 
-```
+2 - REDE VPC
+	minha-rede
+	vpc-123456
+
+
+3 - SUB-REDE
+	minha-subrede
+	subnet-123456
+	
+4 - CRIAR GATEWAY
+	meu-gateway
+	igw-123456
+	
+4.1 - ATACHAR GATEWAY NO VPC(BOTÃO VERDE APÓS CRIAR O GATEWAY)
+
+5 - CRIAR O ROTEAMENTO
+	minha-rota
+	rtb-123456
+	
+5.1 - Relacionar ROTEAMENTO AO GATEWAY
+	5.1.1 - Button Edit Routes
+	5.1.2 - Add Route
+	5.1.3 - Destination: 0.0.0.0/0 Target: Id Gateway
+	
+6 - CRIAR AS VM NO EC2
+	Estrutura do comando:
+		docker-machine create --driver amazonec2 --amazonec2-region "us-east-1" --amazonec2-zone a --amazonec2-vpc-id "vpc-123456" --amazonec2-subnet-id "subnet-123456" nome-da-vm
+
+7 - Acessar as VM's criadas e mudar a senha do root:
+	docker-machine ssh nome-da-vm
+	
+	sudo passwd root
+	su
+	docker swarm init
+	
+8 - Definir a VM Pai e as VM's Filhas:
+	docker swarm join --token TOKEN IP:2377
+	
+IP LOCAL: 172.31.0.21
+	
+9 - Acessar as VM 2 e 3 e fazer o relacionamento entre o node vm1 e as outras duas:
+ docker swarm join --token SWMTKN-1-4mapkewv72f30n40whru5lz5ietbjtkvkuim3ch734wmalkkrr-a7715ovoup7cbjxgzkddsad13 172.31.0.21:2377
 
 Feito com ❤️ por Douglas Lima <img src="https://raw.githubusercontent.com/Douglasproglima/douglasproglima/master/gifs/Hi.gif" width="30px"></h2> [Entre em contato!](https://www.linkedin.com/in/douglasproglima)
